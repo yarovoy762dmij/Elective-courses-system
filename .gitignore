@@ -1,0 +1,20 @@
+#Временные файлы сборки Qt Creator
+build*/
+*.pro.user
+*.pro.user.*
+*.stash
+
+#Компиляция и бинарники
+*.o
+*.obj
+*.exe
+*.dll
+*.a
+*.lib
+
+#Временные файлы текстовых редакторов / LaTeX
+*.aux
+*.log
+*.toc
+*.pdf
+.gitignore~
