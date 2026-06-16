@@ -10,15 +10,37 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
+    model/courseenrollment.cpp \
     model/dbmanager.cpp \
-    model/entities.cpp \
+    model/elective.cpp \
     controller/authcontroller.cpp \
+    model/examrecord.cpp \
+    model/examsheet.cpp \
+    model/lessontype.cpp \
+    model/role.cpp \
+    model/semestercourse.cpp \
+    model/student.cpp \
+    model/professor.cpp \
+    model/professorcompetency.cpp \
+    model/teachingload.cpp \
+    model/user.cpp \
     view/mainwindow.cpp
 
 HEADERS += \
+    model/courseenrollment.h \
     model/dbmanager.h \
-    model/entities.h \
+    model/elective.h \
     controller/authcontroller.h \
+    model/examrecord.h \
+    model/examsheet.h \
+    model/lessontype.h \
+    model/role.h \
+    model/semestercourse.h \
+    model/student.h \
+    model/professor.h \
+    model/professorcompetency.h \
+    model/teachingload.h \
+    model/user.h \
     view/mainwindow.h
 
 FORMS += \
