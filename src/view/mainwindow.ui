@@ -265,7 +265,7 @@
     </widget>
     <widget class="QWidget" name="tab">
      <attribute name="title">
-      <string>Факультативы</string>
+      <string>Организация факультативов</string>
      </attribute>
      <widget class="QTableView" name="tvElectives">
       <property name="geometry">
@@ -277,7 +277,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QTableView" name="tableView_2">
+     <widget class="QTableView" name="tvCourses">
       <property name="geometry">
        <rect>
         <x>530</x>
@@ -300,7 +300,7 @@
        <string>Список факультативов</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="btnElectiveAdd">
       <property name="geometry">
        <rect>
         <x>70</x>
@@ -313,7 +313,7 @@
        <string>Добавить</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="btnElectiveEdit">
       <property name="geometry">
        <rect>
         <x>200</x>
@@ -326,10 +326,62 @@
        <string>Переименовать</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="btnElectiveDelete">
       <property name="geometry">
        <rect>
         <x>360</x>
+        <y>450</y>
+        <width>80</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Удалить</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_8">
+      <property name="geometry">
+       <rect>
+        <x>540</x>
+        <y>30</y>
+        <width>241</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Семестровые курсы и часы нагрузки</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnCourseAdd">
+      <property name="geometry">
+       <rect>
+        <x>560</x>
+        <y>450</y>
+        <width>80</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Добавить</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnCourseEdit">
+      <property name="geometry">
+       <rect>
+        <x>690</x>
+        <y>450</y>
+        <width>111</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Редактировать</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnCourseDelete">
+      <property name="geometry">
+       <rect>
+        <x>850</x>
         <y>450</y>
         <width>80</width>
         <height>24</height>
