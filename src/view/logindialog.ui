@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Авторизация</string>
   </property>
   <widget class="QLineEdit" name="lePass">
    <property name="geometry">
