@@ -20,6 +20,7 @@ public:
 
 private slots:
     void on_btnLogin_clicked();
+    void on_btnReg_clicked();
 
 private:
     Ui::LoginDialog *ui;

@@ -2,6 +2,7 @@
 #include "ui_logindialog.h"
 #include "controller/authcontroller.h"
 #include "model/user.h"
+#include "registerdialog.h"
 #include <QMessageBox>
 
 LoginDialog::LoginDialog(QWidget *parent)
@@ -34,3 +35,11 @@ void LoginDialog::on_btnLogin_clicked()
     }
 }
 
+void LoginDialog::on_btnReg_clicked()
+{
+    RegisterDialog regDlg(this);
+    regDlg.exec();
+
+    ui->leLogin->clear();
+    ui->lePass->clear();
+}

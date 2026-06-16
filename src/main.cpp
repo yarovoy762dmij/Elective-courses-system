@@ -17,11 +17,18 @@ int main(int argc, char *argv[])
     //Окно авторизации
     LoginDialog loginDlg;
 
-    if (loginDlg.exec() == QDialog::Accepted) {
-        //Передача залогиненного пользователя в конструктор главного окна
-        MainWindow w(loginDlg.getLoggedInUser());
-        w.show();
-        return a.exec();
+    //Бесконечный цикл логина для реализации переключения между авторизацией и регистрацией
+    while (true) {
+        LoginDialog loginDlg;
+
+        if (loginDlg.exec() == QDialog::Accepted) {
+            MainWindow w(loginDlg.getLoggedInUser());
+            w.show();
+            return a.exec();
+        }
+        else {
+            break;
+        }
     }
 
     return 0;

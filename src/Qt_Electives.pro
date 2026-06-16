@@ -26,7 +26,8 @@ SOURCES += \
     model/teachingload.cpp \
     model/user.cpp \
     view/logindialog.cpp \
-    view/mainwindow.cpp
+    view/mainwindow.cpp \
+    view/registerdialog.cpp
 
 HEADERS += \
     controller/session.h \
@@ -45,11 +46,13 @@ HEADERS += \
     model/teachingload.h \
     model/user.h \
     view/logindialog.h \
-    view/mainwindow.h
+    view/mainwindow.h \
+    view/registerdialog.h
 
 FORMS += \
     view/logindialog.ui \
-    view/mainwindow.ui
+    view/mainwindow.ui \
+    view/registerdialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
