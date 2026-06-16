@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    controller/session.cpp \
     main.cpp \
     model/courseenrollment.cpp \
     model/dbmanager.cpp \
@@ -24,9 +25,11 @@ SOURCES += \
     model/professorcompetency.cpp \
     model/teachingload.cpp \
     model/user.cpp \
+    view/logindialog.cpp \
     view/mainwindow.cpp
 
 HEADERS += \
+    controller/session.h \
     model/courseenrollment.h \
     model/dbmanager.h \
     model/elective.h \
@@ -41,9 +44,11 @@ HEADERS += \
     model/professorcompetency.h \
     model/teachingload.h \
     model/user.h \
+    view/logindialog.h \
     view/mainwindow.h
 
 FORMS += \
+    view/logindialog.ui \
     view/mainwindow.ui
 
 # Default rules for deployment.
