@@ -1,7 +1,8 @@
 #ifndef AUTHCONTROLLER_H
 #define AUTHCONTROLLER_H
 
-#include "../model/entities.h"
+#include "../model/user.h"
+#include "../model/role.h"
 #include <QString>
 
 class AuthController {
