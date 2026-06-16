@@ -14,22 +14,26 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    //Окно авторизации
-    LoginDialog loginDlg;
+    bool logoutRequested = false;
 
-    //Бесконечный цикл логина для реализации переключения между авторизацией и регистрацией
-    while (true) {
+    do {                                //Изменение реализации цикла для корректной работы оконного приложения
+        logoutRequested = false;
         LoginDialog loginDlg;
 
+        //Пользователь успешно авторизовался или зарегистрировался и вошел
         if (loginDlg.exec() == QDialog::Accepted) {
             MainWindow w(loginDlg.getLoggedInUser());
             w.show();
-            return a.exec();
+
+            a.exec();
+
+            if (w.isLogoutRequested()) {
+                logoutRequested = true;         //Флаг для нового цикла авторизации, если пользователь разлогинился
+            }
         }
-        else {
-            break;
-        }
-    }
+        else break;
+
+    } while (logoutRequested);
 
     return 0;
 }
