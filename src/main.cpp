@@ -1,6 +1,7 @@
 #include "view/mainwindow.h"
 #include "view/logindialog.h"
 #include "model/dbmanager.h"
+#include "controller/session.h"
 #include <QApplication>
 #include <QMessageBox>
 
@@ -22,12 +23,15 @@ int main(int argc, char *argv[])
 
         //Пользователь успешно авторизовался или зарегистрировался и вошел
         if (loginDlg.exec() == QDialog::Accepted) {
+            Session::instance().setCurrentUser(loginDlg.getLoggedInUser());
+
             MainWindow w(loginDlg.getLoggedInUser());
             w.show();
 
             a.exec();
 
             if (w.isLogoutRequested()) {
+                Session::instance().logout();
                 logoutRequested = true;         //Флаг для нового цикла авторизации, если пользователь разлогинился
             }
         }

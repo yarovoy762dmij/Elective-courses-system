@@ -26,7 +26,7 @@ private slots:
     void on_btnSaveProfile_clicked();
     void on_btnLogout_clicked();
 
-    //Вкладка "Факультативы"
+    //Вкладка "Организация факультативов"
     void on_tvElectives_clicked(const QModelIndex &index);
     void on_btnElectiveAdd_clicked();
     void on_btnElectiveEdit_clicked();
@@ -35,6 +35,14 @@ private slots:
     void on_btnCourseAdd_clicked();
     void on_btnCourseEdit_clicked();
     void on_btnCourseDelete_clicked();
+
+    //Вкладка "Запись студентов"
+    void on_btnStudentAdd_clicked();
+    void on_btnStudentEdit_clicked();
+    void on_btnStudentDelete_clicked();
+    void on_tvStudents_clicked(const QModelIndex &index);
+    void on_btnEnroll_clicked();
+    void on_btnUnenroll_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -52,5 +60,13 @@ private:
     int getSelectedCourseId() const;
 
     int getProfessorIdFromDialog(int currentProfessorId = -1);
+
+    QStandardItemModel *m_studentsModel = nullptr;
+    QStandardItemModel *m_availableModel = nullptr;
+    QStandardItemModel *m_enrolledModel = nullptr;
+
+    void refreshStudentsTable();
+    void refreshEnrollmentTables(int studentId);
+    int getSelectedStudentId() const;
 };
 #endif // MAINWINDOW_H

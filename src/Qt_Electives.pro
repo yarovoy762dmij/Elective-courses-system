@@ -9,8 +9,13 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    controller/electivecontroller.cpp \
+    controller/enrollmentcontroller.cpp \
     controller/profilecontroller.cpp \
+    controller/semestercoursecontroller.cpp \
     controller/session.cpp \
+    controller/studentcontroller.cpp \
+    controller/usercontroller.cpp \
     main.cpp \
     model/courseenrollment.cpp \
     model/dbmanager.cpp \
@@ -32,8 +37,13 @@ SOURCES += \
     view/registerdialog.cpp
 
 HEADERS += \
+    controller/electivecontroller.h \
+    controller/enrollmentcontroller.h \
     controller/profilecontroller.h \
+    controller/semestercoursecontroller.h \
     controller/session.h \
+    controller/studentcontroller.h \
+    controller/usercontroller.h \
     model/courseenrollment.h \
     model/dbmanager.h \
     model/elective.h \

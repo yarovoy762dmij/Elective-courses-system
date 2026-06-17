@@ -1,6 +1,8 @@
 #include "student.h"
 #include "dbmanager.h"
 #include <QVariant>
+#include <QSqlError>
+#include <QDebug>
 
 Student Student::fromQuery(const QSqlQuery& q) {
     Student s;
@@ -22,6 +24,13 @@ QList<Student> Student::getAll() {
     return list;
 }
 
+std::optional<Student> Student::getById(int id) {
+    QSqlQuery q = DBManager::instance().execQuery("SELECT * FROM студенты WHERE id = ?;", {id});
+    if (q.next())
+        return fromQuery(q);
+    return std::nullopt;
+}
+
 bool Student::insert(const Student& student) {
     QSqlQuery q = DBManager::instance().execQuery(
         "INSERT INTO студенты (фамилия, имя, отчество, телефон, адрес, минимальное_количество_предметов) "
@@ -31,11 +40,26 @@ bool Student::insert(const Student& student) {
          student.phone,
          student.address.isEmpty() ? QVariant() : student.address,
          student.minSubjectCount});
+
+    if (!q.isActive()) {
+        qDebug() << "ОШИБКА ДОБАВЛЕНИЯ СТУДЕНТА:" << q.lastError().text();
+    }
     return q.isActive();
 }
 
 bool Student::remove(int id) {
-    QSqlQuery q = DBManager::instance().execQuery(
-        "DELETE FROM студенты WHERE id = ?;", {id});
+    QSqlQuery q = DBManager::instance().execQuery("DELETE FROM студенты WHERE id = ?;", {id});
     return q.isActive();
+}
+
+bool Student::update() {
+    QSqlQuery q = DBManager::instance().execQuery(
+        "UPDATE студенты SET фамилия = ?, имя = ?, отчество = ?, телефон = ?, адрес = ?, "
+        "минимальное_количество_предметов = ? WHERE id = ?;",
+        {lastName, firstName,
+         middleName.isEmpty() ? QVariant() : middleName,
+         phone,
+         address.isEmpty() ? QVariant() : address,
+         minSubjectCount, id});
+    return q.isActive() && q.numRowsAffected() > 0;
 }
