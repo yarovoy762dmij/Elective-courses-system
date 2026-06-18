@@ -44,6 +44,13 @@ private slots:
     void on_btnEnroll_clicked();
     void on_btnUnenroll_clicked();
 
+    //Вкладка "Ведомости и успеваемость"
+    void on_cbSemesterCourse_currentIndexChanged(int index);
+    void on_tableView_2_clicked(const QModelIndex &index);
+    void on_btnSheetCreate_clicked();
+    void on_btnSheetDelete_clicked();
+    void on_btnSetGrade_clicked();
+
 private:
     Ui::MainWindow *ui;
     User m_currentUser;
@@ -64,6 +71,13 @@ private:
     QStandardItemModel *m_studentsModel = nullptr;
     QStandardItemModel *m_availableModel = nullptr;
     QStandardItemModel *m_enrolledModel = nullptr;
+
+    QStandardItemModel *m_examSheetsModel = nullptr;
+    QStandardItemModel *m_studentGradesModel = nullptr;
+
+    void refreshExamCoursesCombo();
+    void refreshExamSheetsTable(int courseId);
+    void refreshStudentGradesTable(int sheetId);
 
     void refreshStudentsTable();
     void refreshEnrollmentTables(int studentId);

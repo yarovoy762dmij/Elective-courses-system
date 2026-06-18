@@ -10,6 +10,7 @@
 #include "model/professor.h"
 #include "model/student.h"
 #include "model/courseenrollment.h"
+#include "controller/examsheetcontroller.h"
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QStandardItemModel>
@@ -86,6 +87,29 @@ MainWindow::MainWindow(const User& user, QWidget *parent)
     ui->tvEnrolledCourses->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     refreshStudentsTable();
+
+    //5. Настройка таблицы Ведомостей
+    m_examSheetsModel = new QStandardItemModel(this);
+    m_examSheetsModel->setHorizontalHeaderLabels({"ID", "Дата создания"});
+    ui->tableView_2->setModel(m_examSheetsModel);
+    ui->tableView_2->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView_2->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableView_2->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableView_2->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->tableView_2->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+
+    //6. Настройка таблицы Оценок (содержимого Ведомостей)
+    m_studentGradesModel = new QStandardItemModel(this);
+    m_studentGradesModel->setHorizontalHeaderLabels({"ID Студента", "ФИО Студента", "Оценка"});
+    ui->tableView->setModel(m_studentGradesModel);
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+    ui->tableView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+
+    refreshExamCoursesCombo();
 }
 
 MainWindow::~MainWindow()
@@ -114,6 +138,13 @@ void MainWindow::setupRoleAccess()
     bool canEnroll = (role == "Суперпользователь" || role == "Методист");
     ui->btnEnroll->setEnabled(canEnroll);
     ui->btnUnenroll->setEnabled(canEnroll);
+
+    bool canManageSheets = (role == "Суперпользователь" || role == "Методист" || role == "Преподаватель");
+    bool canSetGrades = (role == "Суперпользователь" || role == "Преподаватель");
+
+    ui->btnSheetCreate->setEnabled(canManageSheets);
+    ui->btnSheetDelete->setEnabled(canManageSheets);
+    ui->btnSetGrade->setEnabled(canSetGrades);
 }
 
 // ЛОГИКА ПРОФИЛЯ
@@ -701,5 +732,166 @@ void MainWindow::on_btnUnenroll_clicked()
         QMessageBox::information(this, "Успех", "Студент отчислен с курса.");
     } else {
         QMessageBox::critical(this, "Ошибка", "Не удалось отчислить студента.");
+    }
+}
+
+//ВЕДОМОСТИ И УСПЕВАЕМОСТЬ
+void MainWindow::refreshExamCoursesCombo()
+{
+    ui->cbSemesterCourse->blockSignals(true);
+    ui->cbSemesterCourse->clear();
+
+    QList<ExamCourseRow> courses = ExamSheetController::getAvailableCourses();
+
+    for (const ExamCourseRow &course : courses) {
+        ui->cbSemesterCourse->addItem(course.getDisplayText(), course.courseId());
+    }
+
+    ui->cbSemesterCourse->blockSignals(false);
+
+    if (ui->cbSemesterCourse->count() > 0) {
+        ui->cbSemesterCourse->setCurrentIndex(0);
+        int initialCourseId = ui->cbSemesterCourse->currentData().toInt();
+        refreshExamSheetsTable(initialCourseId);
+    } else {
+        m_examSheetsModel->removeRows(0, m_examSheetsModel->rowCount());
+        m_studentGradesModel->removeRows(0, m_studentGradesModel->rowCount());
+    }
+}
+
+void MainWindow::refreshExamSheetsTable(int courseId)
+{
+    m_examSheetsModel->removeRows(0, m_examSheetsModel->rowCount());
+    m_studentGradesModel->removeRows(0, m_studentGradesModel->rowCount());
+
+    QList<ExamSheet> sheets = ExamSheetController::getSheetsForCourse(courseId);
+    for (const ExamSheet &sheet : sheets) {
+        QList<QStandardItem*> rowItems;
+
+        rowItems.append(new QStandardItem(QString::number(sheet.id)));
+        rowItems.append(new QStandardItem(sheet.creationDate.toString("dd.MM.yyyy")));
+
+        m_examSheetsModel->appendRow(rowItems);
+    }
+}
+
+void MainWindow::refreshStudentGradesTable(int sheetId)
+{
+    m_studentGradesModel->removeRows(0, m_studentGradesModel->rowCount());
+
+    QList<StudentGradeRow> records = ExamSheetController::getStudentGrades(sheetId);
+    for (const auto& rec : records) {
+        QList<QStandardItem*> row;
+
+        row.append(new QStandardItem(QString::number(rec.studentId())));
+        row.append(new QStandardItem(rec.studentFullName()));
+
+        QString gradeText = (rec.grade() > 0) ? QString::number(rec.grade()) : "—";
+        QStandardItem* gradeItem = new QStandardItem(gradeText);
+
+        if (rec.grade() == 5) gradeItem->setForeground(QBrush(Qt::darkGreen));
+        else if (rec.grade() == 2) gradeItem->setForeground(QBrush(Qt::red));
+
+        row.append(gradeItem);
+        m_studentGradesModel->appendRow(row);
+    }
+}
+
+void MainWindow::on_cbSemesterCourse_currentIndexChanged(int index)
+{
+    if (index < 0) return;
+    int courseId = ui->cbSemesterCourse->itemData(index).toInt();
+    refreshExamSheetsTable(courseId);
+}
+
+void MainWindow::on_tableView_2_clicked(const QModelIndex &index)
+{
+    Q_UNUSED(index);
+
+    QModelIndexList selected = ui->tableView_2->selectionModel()->selectedRows();
+
+    if (selected.isEmpty()) {
+        m_studentGradesModel->removeRows(0, m_studentGradesModel->rowCount());
+        return;
+    }
+
+    int sheetId = m_examSheetsModel->item(selected.first().row(), 0)->text().toInt();
+
+    refreshStudentGradesTable(sheetId);
+}
+void MainWindow::on_btnSheetCreate_clicked()
+{
+    int index = ui->cbSemesterCourse->currentIndex();
+    if (index < 0) {
+        QMessageBox::warning(this, "Внимание", "Пожалуйста, выберите курс из списка сверху.");
+        return;
+    }
+
+    int courseId = ui->cbSemesterCourse->itemData(index).toInt();
+    if (ExamSheetController::createSheet(courseId)) {
+        refreshExamSheetsTable(courseId);
+    } else {
+        QMessageBox::critical(this, "Ошибка", "Не удалось создать ведомость.\nУбедитесь, что за курсом закреплен преподаватель.");
+    }
+}
+
+void MainWindow::on_btnSheetDelete_clicked()
+{
+    QModelIndexList selected = ui->tableView_2->selectionModel()->selectedRows();
+    if (selected.isEmpty()) {
+        QMessageBox::warning(this, "Внимание", "Выберите ведомость в левой таблице для удаления.");
+        return;
+    }
+
+    int row = selected.first().row();
+    int sheetId = m_examSheetsModel->item(row, 0)->text().toInt();
+
+    auto answer = QMessageBox::question(this, "Удаление ведомости",
+                                        "Вы действительно хотите удалить эту ведомость?\nВсе выставленные в ней оценки будут стёрты!",
+                                        QMessageBox::Yes | QMessageBox::No);
+    if (answer != QMessageBox::Yes) return;
+
+    if (ExamSheetController::deleteSheet(sheetId)) {
+        int index = ui->cbSemesterCourse->currentIndex();
+        if (index >= 0) {
+            refreshExamSheetsTable(ui->cbSemesterCourse->itemData(index).toInt());
+        }
+    } else {
+        QMessageBox::critical(this, "Ошибка", "Произошла ошибка при удалении ведомости из базы данных.");
+    }
+}
+
+void MainWindow::on_btnSetGrade_clicked()
+{
+    QModelIndexList sheetSelected = ui->tableView_2->selectionModel()->selectedRows();
+    if (sheetSelected.isEmpty()) {
+        QMessageBox::warning(this, "Внимание", "Сначала выберите конкретную ведомость в левой таблице.");
+        return;
+    }
+    int sheetId = m_examSheetsModel->item(sheetSelected.first().row(), 0)->text().toInt();
+
+    QModelIndexList studentSelected = ui->tableView->selectionModel()->selectedRows();
+    if (studentSelected.isEmpty()) {
+        QMessageBox::warning(this, "Внимание", "Выберите студента в правой таблице для выставления оценки.");
+        return;
+    }
+
+    int studentRow = studentSelected.first().row();
+    int studentId = m_studentGradesModel->item(studentRow, 0)->text().toInt();
+    QString studentName = m_studentGradesModel->item(studentRow, 1)->text();
+    QString currentGradeStr = m_studentGradesModel->item(studentRow, 2)->text();
+
+    int defaultGrade = (currentGradeStr == "—" || currentGradeStr.isEmpty()) ? 5 : currentGradeStr.toInt();
+
+    bool ok;
+    int grade = QInputDialog::getInt(this, "Выставление оценки",
+                                     "Студент: " + studentName + "\nВведите оценку (2 - 5):",
+                                     defaultGrade, 2, 5, 1, &ok);
+    if (!ok) return;
+
+    if (ExamSheetController::setGrade(sheetId, studentId, grade)) {
+        refreshStudentGradesTable(sheetId);
+    } else {
+        QMessageBox::critical(this, "Ошибка", "Не удалось сохранить оценку в базе данных.");
     }
 }

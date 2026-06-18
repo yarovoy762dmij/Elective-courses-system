@@ -11,6 +11,7 @@ CONFIG += c++17
 SOURCES += \
     controller/electivecontroller.cpp \
     controller/enrollmentcontroller.cpp \
+    controller/examsheetcontroller.cpp \
     controller/profilecontroller.cpp \
     controller/semestercoursecontroller.cpp \
     controller/session.cpp \
@@ -24,7 +25,9 @@ SOURCES += \
     model/examrecord.cpp \
     model/examsheet.cpp \
     model/lessontype.cpp \
+    model/query/examcourserow.cpp \
     model/query/semestercourserow.cpp \
+    model/query/studentgraderow.cpp \
     model/role.cpp \
     model/semestercourse.cpp \
     model/student.cpp \
@@ -39,6 +42,7 @@ SOURCES += \
 HEADERS += \
     controller/electivecontroller.h \
     controller/enrollmentcontroller.h \
+    controller/examsheetcontroller.h \
     controller/profilecontroller.h \
     controller/semestercoursecontroller.h \
     controller/session.h \
@@ -51,7 +55,9 @@ HEADERS += \
     model/examrecord.h \
     model/examsheet.h \
     model/lessontype.h \
+    model/query/examcourserow.h \
     model/query/semestercourserow.h \
+    model/query/studentgraderow.h \
     model/role.h \
     model/semestercourse.h \
     model/student.h \
