@@ -11,6 +11,7 @@
 #include "model/student.h"
 #include "model/courseenrollment.h"
 #include "controller/examsheetcontroller.h"
+#include "controller/usercontroller.h"
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QStandardItemModel>
@@ -110,6 +111,16 @@ MainWindow::MainWindow(const User& user, QWidget *parent)
     ui->tableView->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 
     refreshExamCoursesCombo();
+
+    //7. Настройка таблицы Пользователей
+    m_usersModel = new QStandardItemModel(this);
+    ui->tvUsers->setModel(m_usersModel);
+    ui->tvUsers->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tvUsers->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tvUsers->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tvUsers->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+
+    refreshUsersTable();
 }
 
 MainWindow::~MainWindow()
@@ -145,6 +156,10 @@ void MainWindow::setupRoleAccess()
     ui->btnSheetCreate->setEnabled(canManageSheets);
     ui->btnSheetDelete->setEnabled(canManageSheets);
     ui->btnSetGrade->setEnabled(canSetGrades);
+
+    bool isSuperUser = m_currentUser.roleName.contains("Суперпользователь");
+    ui->btnAddRole->setEnabled(isSuperUser);
+    ui->btnRemoveRole->setEnabled(isSuperUser);
 }
 
 // ЛОГИКА ПРОФИЛЯ
@@ -893,5 +908,94 @@ void MainWindow::on_btnSetGrade_clicked()
         refreshStudentGradesTable(sheetId);
     } else {
         QMessageBox::critical(this, "Ошибка", "Не удалось сохранить оценку в базе данных.");
+    }
+}
+
+//ПОЛЬЗОВАТЕЛИ
+void MainWindow::refreshUsersTable()
+{
+    m_usersModel->clear();
+    m_usersModel->setHorizontalHeaderLabels({"ID", "Логин", "Email", "Назначенные роли"});
+
+    QList<UserAdminRow> users = UserController::getAllUsersForAdmin();
+    for (const UserAdminRow &user : users) {
+        QList<QStandardItem*> rowItems;
+        rowItems << new QStandardItem(QString::number(user.id))
+                 << new QStandardItem(user.login)
+                 << new QStandardItem(user.email)
+                 << new QStandardItem(user.roles);
+        m_usersModel->appendRow(rowItems);
+    }
+}
+
+void MainWindow::on_btnAddRole_clicked()
+{
+    QModelIndexList selected = ui->tvUsers->selectionModel()->selectedRows();
+    if (selected.isEmpty()) {
+        QMessageBox::warning(this, "Внимание", "Выберите пользователя для добавления роли.");
+        return;
+    }
+
+    int userId = m_usersModel->item(selected.first().row(), 0)->text().toInt();
+    QString userLogin = m_usersModel->item(selected.first().row(), 1)->text();
+
+    QMap<int, QString> availableRoles = UserController::getAvailableRoles(userId);
+    if (availableRoles.isEmpty()) {
+        QMessageBox::information(this, "Информация", "У пользователя <b>" + userLogin + "</b> уже есть все возможные роли.");
+        return;
+    }
+
+    QStringList roleNames = availableRoles.values();
+    QList<int> roleIds = availableRoles.keys();
+
+    bool ok;
+    QString selectedRole = QInputDialog::getItem(this, "Добавление роли", "Выберите роль для добавления:", roleNames, 0, false, &ok);
+    if (!ok || selectedRole.isEmpty()) return;
+
+    int roleId = roleIds[roleNames.indexOf(selectedRole)];
+
+    if (UserController::addRole(userId, roleId)) {
+        refreshUsersTable();
+    } else {
+        QMessageBox::critical(this, "Ошибка", "Не удалось назначить роль.");
+    }
+}
+
+void MainWindow::on_btnRemoveRole_clicked()
+{
+    QModelIndexList selected = ui->tvUsers->selectionModel()->selectedRows();
+    if (selected.isEmpty()) {
+        QMessageBox::warning(this, "Внимание", "Выберите пользователя для отзыва роли.");
+        return;
+    }
+
+    int userId = m_usersModel->item(selected.first().row(), 0)->text().toInt();
+    QString userLogin = m_usersModel->item(selected.first().row(), 1)->text();
+
+    QMap<int, QString> currentRoles = UserController::getUserRoles(userId);
+    if (currentRoles.isEmpty()) {
+        QMessageBox::information(this, "Информация", "У пользователя <b>" + userLogin + "</b> нет назначенных ролей.");
+        return;
+    }
+
+    QStringList roleNames = currentRoles.values();
+    QList<int> roleIds = currentRoles.keys();
+
+    bool ok;
+    QString selectedRole = QInputDialog::getItem(this, "Удаление роли", "Выберите роль, которую нужно отозвать:", roleNames, 0, false, &ok);
+    if (!ok || selectedRole.isEmpty()) return;
+
+    //НО: Суперпользователь не может снять роль "Суперпользователь" с самого себя
+    if (userId == m_currentUser.id && selectedRole == "Суперпользователь") {
+        QMessageBox::warning(this, "Ошибка", "Вы не можете отозвать права суперпользователя у самого себя!");
+        return;
+    }
+
+    int roleId = roleIds[roleNames.indexOf(selectedRole)];
+
+    if (UserController::removeRole(userId, roleId)) {
+        refreshUsersTable();
+    } else {
+        QMessageBox::critical(this, "Ошибка", "Не удалось отозвать роль.");
     }
 }

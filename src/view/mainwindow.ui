@@ -402,7 +402,7 @@
         <x>60</x>
         <y>30</y>
         <width>891</width>
-        <height>192</height>
+        <height>251</height>
        </rect>
       </property>
      </widget>
@@ -410,7 +410,7 @@
       <property name="geometry">
        <rect>
         <x>130</x>
-        <y>240</y>
+        <y>300</y>
         <width>201</width>
         <height>24</height>
        </rect>
@@ -423,7 +423,7 @@
       <property name="geometry">
        <rect>
         <x>410</x>
-        <y>240</y>
+        <y>300</y>
         <width>201</width>
         <height>24</height>
        </rect>
@@ -436,7 +436,7 @@
       <property name="geometry">
        <rect>
         <x>680</x>
-        <y>240</y>
+        <y>300</y>
         <width>201</width>
         <height>24</height>
        </rect>
@@ -449,7 +449,7 @@
       <property name="geometry">
        <rect>
         <x>60</x>
-        <y>310</y>
+        <y>360</y>
         <width>381</width>
         <height>211</height>
        </rect>
@@ -459,7 +459,7 @@
       <property name="geometry">
        <rect>
         <x>570</x>
-        <y>310</y>
+        <y>360</y>
         <width>381</width>
         <height>211</height>
        </rect>
@@ -469,7 +469,7 @@
       <property name="geometry">
        <rect>
         <x>460</x>
-        <y>350</y>
+        <y>420</y>
         <width>91</width>
         <height>31</height>
        </rect>
@@ -482,7 +482,7 @@
       <property name="geometry">
        <rect>
         <x>460</x>
-        <y>410</y>
+        <y>480</y>
         <width>91</width>
         <height>31</height>
        </rect>
@@ -495,7 +495,7 @@
       <property name="geometry">
        <rect>
         <x>70</x>
-        <y>290</y>
+        <y>340</y>
         <width>241</width>
         <height>16</height>
        </rect>
@@ -508,7 +508,7 @@
       <property name="geometry">
        <rect>
         <x>580</x>
-        <y>290</y>
+        <y>340</y>
         <width>311</width>
         <height>16</height>
        </rect>
@@ -535,11 +535,155 @@
      <attribute name="title">
       <string>Ведомости и успеваемость</string>
      </attribute>
+     <widget class="QComboBox" name="cbSemesterCourse">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>30</y>
+        <width>641</width>
+        <height>31</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableView" name="tableView">
+      <property name="geometry">
+       <rect>
+        <x>530</x>
+        <y>150</y>
+        <width>401</width>
+        <height>341</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableView" name="tableView_2">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>150</y>
+        <width>401</width>
+        <height>341</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSheetCreate">
+      <property name="geometry">
+       <rect>
+        <x>130</x>
+        <y>520</y>
+        <width>101</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Создать</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSheetDelete">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>520</y>
+        <width>101</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Удалить</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnSetGrade">
+      <property name="geometry">
+       <rect>
+        <x>640</x>
+        <y>520</y>
+        <width>161</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Выставить оценку</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_11">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>130</y>
+        <width>171</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Экзаменационные ведомости</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_12">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>130</y>
+        <width>201</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Студенты и оценки</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
       <string>Пользователи</string>
      </attribute>
+     <widget class="QTableView" name="tvUsers">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>50</y>
+        <width>861</width>
+        <height>341</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnRemoveRole">
+      <property name="geometry">
+       <rect>
+        <x>550</x>
+        <y>460</y>
+        <width>281</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Убрать роль</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_13">
+      <property name="geometry">
+       <rect>
+        <x>80</x>
+        <y>30</y>
+        <width>301</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Управление аккаунтами и ролями</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btnAddRole">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>460</y>
+        <width>281</width>
+        <height>24</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Добавить роль</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>

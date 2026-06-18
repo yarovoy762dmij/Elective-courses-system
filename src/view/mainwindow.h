@@ -51,6 +51,10 @@ private slots:
     void on_btnSheetDelete_clicked();
     void on_btnSetGrade_clicked();
 
+    //Вкладка "Пользоавтели"
+    void on_btnAddRole_clicked();
+    void on_btnRemoveRole_clicked();
+
 private:
     Ui::MainWindow *ui;
     User m_currentUser;
@@ -82,5 +86,8 @@ private:
     void refreshStudentsTable();
     void refreshEnrollmentTables(int studentId);
     int getSelectedStudentId() const;
+
+    QStandardItemModel *m_usersModel = nullptr;
+    void refreshUsersTable();
 };
 #endif // MAINWINDOW_H
