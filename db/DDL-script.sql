@@ -80,9 +80,6 @@ CREATE TABLE семестровые_курсы (
 	номер_семестра  INT NOT NULL,
 	id_факультатива INT NOT NULL,
 
-	CONSTRAINT uq_семестровые_курсы_сост_ключ
-        UNIQUE (учебный_год, номер_семестра, id_факультатива),
-
 	CONSTRAINT chk_семестровые_курсы_год
         CHECK (учебный_год BETWEEN 2000 AND 2050),
 
