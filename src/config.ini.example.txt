@@ -1,0 +1,6 @@
+[Database]
+host=localhost
+port=5432
+dbname=elective-courses
+user=postgres
+password=your_secret_password_here

@@ -4,14 +4,42 @@
 #include "controller/session.h"
 #include <QApplication>
 #include <QMessageBox>
+#include <QSettings>
+#include <QFile>
+#include <QDir>
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    //Инициализация подключения к БД
-    if (!DBManager::instance().connectToDatabase("localhost", 5432, "elective-courses", "postgres", "dLWsK8g_R1@01$I")) {
-        QMessageBox::critical(nullptr, "Ошибка БД", "Не удалось подключиться к базе данных.");
+    //Поиск config.ini в папке с .exe файлом
+    QString configPath = QApplication::applicationDirPath() + "/config.ini";
+
+    if (!QFile::exists(configPath)) {
+        //Если там нет, поиск в текущей рабочей директории (полезно при запуске из Qt Creator)
+        if (!QFile::exists("config.ini")) {
+            //Если файл не найден, вывод сообщения
+            QMessageBox::critical(nullptr, "Ошибка конфигурации",
+                                  "Не найден файл конфигурации config.ini!\n\n"
+                                  "Пожалуйста, скопируйте файл 'config.ini.example.txt', "
+                                  "переименуйте его в 'config.ini' и положите в папку с проектом или папку сборки.");
+            return -1;
+        }
+    }
+
+    QSettings settings(configPath, QSettings::IniFormat);
+
+    QString host     = settings.value("Database/host", "localhost").toString();
+    int port         = settings.value("Database/port", 5432).toInt();
+    QString dbname   = settings.value("Database/dbname", "elective-courses").toString();
+    QString user     = settings.value("Database/user", "postgres").toString();
+    QString password = settings.value("Database/password", "").toString();
+
+    if (!DBManager::instance().connectToDatabase(host, port, dbname, user, password)) {
+        QMessageBox::critical(nullptr, "Ошибка БД",
+                              QString("Не удалось подключиться к базе данных.\n"
+                                      "Проверьте настройки в файле:\n%1\n\n")
+                                  .arg(QDir(configPath).absolutePath()));
         return -1;
     }
 
