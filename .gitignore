@@ -18,3 +18,6 @@ build*/
 *.toc
 *.pdf
 .gitignore~
+
+# Конфигурационные файлы
+config.ini
