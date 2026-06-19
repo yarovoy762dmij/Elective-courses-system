@@ -5,7 +5,7 @@
 #include <QList>
 #include <QSqlQuery>
 
-class Professor {                                     //преподаватели
+class Professor {
 public:
     int id = 0;
     QString lastName;
@@ -17,8 +17,6 @@ public:
 
     static Professor fromQuery(const QSqlQuery& q);
     static QList<Professor> getAll();
-    static bool insert(const Professor& professor);
-    static bool remove(int id);
 };
 
 #endif // PROFESSOR_H

@@ -1,8 +1,8 @@
 #include "professor.h"
-#include "dbmanager.h"
-#include <QVariant>
+#include "controller/professorcontroller.h"
 
-Professor Professor::fromQuery(const QSqlQuery& q) {
+Professor Professor::fromQuery(const QSqlQuery& q)
+{
     Professor t;
     t.id = q.value("id").toInt();
     t.lastName = q.value("фамилия").toString();
@@ -14,28 +14,7 @@ Professor Professor::fromQuery(const QSqlQuery& q) {
     return t;
 }
 
-QList<Professor> Professor::getAll() {
-    QList<Professor> list;
-    QSqlQuery q = DBManager::instance().execQuery("SELECT * FROM преподаватели ORDER BY id;");
-    while (q.next())
-        list.append(fromQuery(q));
-    return list;
-}
-
-bool Professor::insert(const Professor& professor) {
-    QSqlQuery q = DBManager::instance().execQuery(
-        "INSERT INTO преподаватели (фамилия, имя, отчество, телефон, должность, id_пользователя) "
-        "VALUES (?, ?, ?, ?, ?, ?);",
-        {professor.lastName, professor.firstName,
-         professor.middleName.isEmpty() ? QVariant() : professor.middleName,
-         professor.phone,
-         professor.position.isEmpty() ? QVariant() : professor.position,
-         professor.userId});
-    return q.isActive();
-}
-
-bool Professor::remove(int id) {
-    QSqlQuery q = DBManager::instance().execQuery(
-        "DELETE FROM преподаватели WHERE id = ?;", {id});
-    return q.isActive();
+QList<Professor> Professor::getAll()
+{
+    return ProfessorController::getAll();
 }

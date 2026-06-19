@@ -2,10 +2,9 @@
 #define STUDENT_H
 
 #include <QString>
-#include <QList>
 #include <QSqlQuery>
 
-class Student {                                     //студенты
+class Student {
 public:
     int id = 0;
     QString lastName;
@@ -16,9 +15,6 @@ public:
     int minSubjectCount = 0;
 
     static Student fromQuery(const QSqlQuery& q);
-    static QList<Student> getAll();
-    static bool insert(const Student& student);
-    static bool remove(int id);
 };
 
 #endif // STUDENT_H

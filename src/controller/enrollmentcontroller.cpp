@@ -1,52 +1,70 @@
 #include "enrollmentcontroller.h"
-#include "model/student.h"
+#include "model/dbmanager.h"
 #include "model/courseenrollment.h"
+#include "studentcontroller.h"
 #include "session.h"
+#include <QSqlQuery>
+#include <QVariant>
 
 bool EnrollmentController::enrollStudent(int studentId, int electiveId)
 {
-    QString role = Session::instance().currentUser().roleName;                  //Проверка прав
-    if (role != "Суперпользователь" && role != "Методист")
+    QString role = Session::instance().currentUser().roleName;
+    if (role != "Суперпользователь" && role != "Методист") {
         return false;
+    }
 
-    //Получение студента и проверка минимального количества предметов
-    auto studentOpt = Student::getById(studentId);
-    if (!studentOpt)
+    auto studentOpt = StudentController::getById(studentId);
+    if (!studentOpt) {
         return false;
+    }
 
-    return CourseEnrollment::insert(electiveId, studentId);
+    QSqlQuery q = DBManager::instance().execQuery(
+        "INSERT INTO прохождения_курсов (id_факультатива, id_студента, итоговая_оценка) VALUES (?, ?, ?);",
+        {electiveId, studentId, QVariant()});
+    return q.isActive();
 }
 
 bool EnrollmentController::unenrollStudent(int studentId, int electiveId)
 {
     QString role = Session::instance().currentUser().roleName;
-    if (role != "Суперпользователь" && role != "Методист")
+    if (role != "Суперпользователь" && role != "Методист") {
         return false;
+    }
 
-    return CourseEnrollment::remove(electiveId, studentId);
+    QSqlQuery q = DBManager::instance().execQuery(
+        "DELETE FROM прохождения_курсов WHERE id_факультатива = ? AND id_студента = ?;",
+        {electiveId, studentId});
+    return q.isActive();
 }
 
 QList<CourseEnrollment> EnrollmentController::getEnrollmentsByStudent(int studentId)
 {
-    //Получение всех записей студента
-    return CourseEnrollment::getByStudentId(studentId);
+    QList<CourseEnrollment> list;
+    QSqlQuery q = DBManager::instance().execQuery(
+        "SELECT * FROM прохождения_курсов WHERE id_студента = ? ORDER BY id_факультатива;",
+        {studentId});
+    while (q.next()) {
+        list.append(CourseEnrollment::fromQuery(q));
+    }
+    return list;
 }
 
 int EnrollmentController::getEnrolledCount(int studentId)
 {
-    //Количество записанных курсов у студента
     return getEnrollmentsByStudent(studentId).size();
 }
 
 bool EnrollmentController::isMinReached(int studentId)
 {
-    auto studentOpt = Student::getById(studentId);
-    if (!studentOpt)
+    auto studentOpt = StudentController::getById(studentId);
+    if (!studentOpt) {
         return false;
+    }
 
     int minCount = studentOpt->minSubjectCount;
-    if (minCount == 0)
+    if (minCount == 0) {
         return true;
+    }
 
     return getEnrolledCount(studentId) >= minCount;
 }

@@ -2,10 +2,9 @@
 #define USER_H
 
 #include <QString>
-#include <QList>
 #include <QSqlQuery>
 
-class User {                                    // пользователи (+ роль через JOIN для наглядности)
+class User {
 public:
     int id = 0;
     QString login;
@@ -13,7 +12,6 @@ public:
     QString roleName;
 
     static User fromQuery(const QSqlQuery& q);
-    static QList<User> getAll();
 };
 
 #endif // USER_H

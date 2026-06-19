@@ -2,14 +2,13 @@
 #define AUTHCONTROLLER_H
 
 #include "../model/user.h"
-#include "../model/role.h"
 #include <QString>
 
 class AuthController {
 public:
     static QString hashPassword(const QString& password);
 
-    static bool validatePassword(const QString& password);                          //Регулярное выражение для проверки пароля
+    static bool validatePassword(const QString& password);
 
     static bool login(const QString& login, const QString& password, User& outUser);
 
